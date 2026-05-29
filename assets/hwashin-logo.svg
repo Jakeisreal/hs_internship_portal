@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 76" role="img" aria-labelledby="title">
+  <title>HWASHIN</title>
+  <g fill="#15559F">
+    <path d="M9 38 28 6h15L24 38l19 32H28L9 38Z"/>
+    <path d="M31 38 50 6h15L46 38l19 32H50L31 38Z"/>
+    <path d="M53 38 72 6h38l9 15H81L71 38l10 17h38l-9 15H72L53 38Z"/>
+    <path d="M83 31h43l-6 14H92l9 10h16l-8 15H93L73 38l20-32h16L95 31Z"/>
+  </g>
+  <text x="138" y="56" fill="#15559F"
+        font-family="Arial Black, Pretendard, Arial, sans-serif"
+        font-size="52" font-weight="900" letter-spacing="1">HWASHIN</text>
+</svg>

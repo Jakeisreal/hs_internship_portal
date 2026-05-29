@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="㈜화신 현장실습생 모집 및 전형 결과 조회 안내" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>㈜화신 현장실습생 모집 안내</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --navy:#0B0F1A;--navy2:#121A2F;--blue:#1A56FF;--blue2:#E8EEFF;
+  --green:#0AA65B;--green2:#E6F9F0;--red:#D92B2B;--red2:#FEF0F0;
+  --amber:#D97706;--amber2:#FFF7E6;--gray50:#F6F7F9;--gray100:#EDEEF2;
+  --gray200:#D8DAE0;--gray400:#9EA4B0;--gray600:#5E6478;--gray800:#2C3042;
+  --white:#fff;--shadow:0 12px 40px rgba(11,15,26,.10);--radius:22px;
+  --font:'Noto Sans KR',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --display:'Pretendard','Noto Sans KR',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--mono:'IBM Plex Mono','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--gray600);background:var(--white);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+.container{max-width:1160px;margin:0 auto;padding:0 24px}
+.nav{position:sticky;top:0;z-index:50;height:64px;background:rgba(255,255,255,.94);border-bottom:1px solid var(--gray100);backdrop-filter:blur(16px)}
+.nav-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy)}
+.logo-img{display:block;height:28px;width:auto;max-width:190px}
+.logo-badge{font-size:10px;letter-spacing:.08em;background:var(--navy);color:#fff;padding:4px 8px;border-radius:6px}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{font-size:14px;color:var(--gray600);font-weight:600}
+.nav-links a:hover{color:var(--blue)}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border-radius:99px;border:1px solid transparent;font-weight:800;font-size:14px;cursor:pointer;transition:.16s;font-family:var(--font)}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.primary:hover{background:#0038CC;transform:translateY(-1px)}
+.btn.dark{background:var(--navy);color:#fff}
+.btn.ghost{background:#fff;color:var(--navy);border-color:var(--gray200)}
+.btn.ghost:hover{border-color:var(--blue);color:var(--blue);background:var(--blue2)}
+.btn.warn{background:var(--amber);color:#fff}
+.btn.small{height:38px;padding:0 16px;font-size:13px}
+.hero{background:radial-gradient(circle at top right,rgba(26,86,255,.28),transparent 36%),linear-gradient(160deg,var(--navy),#111932);color:#fff;padding:92px 0 80px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:56px;align-items:center}
+.eyebrow,.section-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;border-radius:99px;padding:6px 12px}
+.eyebrow{background:rgba(26,86,255,.18);border:1px solid rgba(127,168,255,.28);color:#8CB0FF;margin-bottom:22px}
+.eyebrow:before,.section-tag:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.hero h1{font-family:var(--display);font-size:clamp(42px,5.2vw,70px);font-weight:900;line-height:1.08;margin-bottom:22px;letter-spacing:0}
+.hero h1 em{color:#7DD3FC;font-style:normal}
+.hero p{color:rgba(255,255,255,.66);font-size:16px;max-width:560px}
+.hero-cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:34px}
+.note{font-size:13px;color:rgba(255,255,255,.46)}
+.note strong{color:#FFB86B}
+.card{background:#fff;border:1px solid var(--gray100);border-radius:var(--radius);box-shadow:0 2px 18px rgba(11,15,26,.06)}
+.dark-card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius);padding:28px;box-shadow:0 18px 60px rgba(0,0,0,.16)}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.metric{background:rgba(0,0,0,.22);border-radius:14px;padding:16px}
+.metric-label{font-size:12px;color:rgba(255,255,255,.42);margin-bottom:5px}
+.metric-val{font-size:19px;color:#fff;font-weight:900}
+.banner{background:var(--amber2);border-top:2px solid var(--amber);border-bottom:1px solid #F4DEAF;padding:14px 0}
+.banner .container{display:flex;gap:12px;align-items:center;font-size:13px;color:var(--gray800)}
+.icon-dot{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--amber);color:#fff;font-weight:900;flex:0 0 auto}
+section{padding:84px 0}
+.section-head{max-width:680px}
+.section-tag{background:var(--blue2);color:var(--blue);margin-bottom:16px}
+.section-head h2{font-family:var(--display);font-size:clamp(32px,4.4vw,50px);line-height:1.1;font-weight:400;color:var(--navy);margin-bottom:14px}
+.section-head p{font-size:15px;color:var(--gray600)}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--gray200);border:1px solid var(--gray200);border-radius:var(--radius);overflow:hidden;margin-top:48px}
+.overview-item{background:#fff;padding:32px 24px;text-align:center}
+.num{font-family:var(--mono);font-size:38px;color:var(--navy);line-height:1;margin-bottom:9px}
+.num span{font-size:20px;color:var(--blue)}
+.label{font-weight:900;color:var(--gray800);font-size:13px;margin-bottom:4px}
+.desc{font-size:12px;color:var(--gray400)}
+.gray{background:var(--gray50)}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.feature{background:#fff;border:1px solid var(--gray100);border-radius:var(--radius);padding:30px;transition:.16s}
+.feature:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.feature-icon{width:46px;height:46px;border-radius:14px;background:var(--blue2);display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:18px}
+.feature h3{font-size:18px;color:var(--navy);margin-bottom:8px}
+.feature p{font-size:14px;color:var(--gray600)}
+.timeline-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:48px}
+.step{background:#fff;border:1px solid var(--gray100);border-radius:var(--radius);padding:26px;position:relative}
+.step-num{width:42px;height:42px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;margin-bottom:18px}
+.step h3{font-size:17px;color:var(--navy);margin-bottom:8px}
+.step p{font-size:14px;color:var(--gray600)}
+.date{display:inline-block;margin-top:16px;border:1px solid var(--gray200);background:var(--gray50);border-radius:10px;padding:6px 10px;font-size:12px;color:var(--gray800);font-family:var(--mono)}
+.notice-card{padding:32px;border-radius:var(--radius);border:1px solid var(--gray100);background:#fff;box-shadow:0 2px 18px rgba(11,15,26,.06)}
+.notice-card h3{font-size:20px;color:var(--navy);margin-bottom:10px}
+.notice-card p{font-size:14px;color:var(--gray600);margin-bottom:18px}
+.notice-list{display:grid;gap:12px;list-style:none}
+.notice-list li{display:flex;gap:10px;font-size:14px;color:var(--gray800)}
+.check{width:21px;height:21px;border-radius:50%;background:var(--green2);color:var(--green);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex:0 0 auto;margin-top:1px}
+.form-wrap{max-width:780px;margin:0 auto}
+.form-panel{background:#fff;border:1px solid var(--gray100);border-radius:var(--radius);box-shadow:var(--shadow);padding:34px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:900;color:var(--gray800);letter-spacing:.04em;margin-bottom:8px}
+.input,select,textarea{width:100%;border:1px solid var(--gray200);border-radius:12px;height:46px;padding:0 14px;font-family:var(--font);font-size:14px;color:var(--navy);outline:none;background:#fff}
+textarea{height:96px;padding:12px 14px;resize:vertical}
+.input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,255,.10)}
+.help{font-size:12px;color:var(--gray400);margin-top:6px}
+.result-box{display:none;margin-top:24px;border-radius:18px;padding:24px;border:1px solid var(--gray100);background:var(--gray50)}
+.result-box.show{display:block}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:5px 10px;font-size:12px;font-weight:900;margin-bottom:12px}
+.badge.green{background:var(--green2);color:var(--green)}
+.badge.red{background:var(--red2);color:var(--red)}
+.badge.amber{background:var(--amber2);color:var(--amber)}
+.badge.blue{background:var(--blue2);color:var(--blue)}
+.result-title{font-size:24px;color:var(--navy);font-weight:900;margin-bottom:8px}
+.result-message{font-size:15px;color:var(--gray600);margin-bottom:18px}
+.info-table{width:100%;border-collapse:collapse;margin-top:12px}
+.info-table th,.info-table td{text-align:left;border-bottom:1px solid var(--gray100);padding:10px 4px;font-size:13px}
+.info-table th{color:var(--gray400);width:150px;font-weight:900}
+.info-table td{color:var(--gray800)}
+.admin-layout{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start}
+.sidebar{position:sticky;top:88px}
+.table-wrap{overflow:auto;border:1px solid var(--gray100);border-radius:18px;background:#fff}
+.data-table{width:100%;border-collapse:collapse;min-width:960px}
+.data-table th,.data-table td{border-bottom:1px solid var(--gray100);padding:11px 12px;text-align:left;font-size:13px}
+.data-table th{background:var(--gray50);color:var(--gray800);font-weight:900;position:sticky;top:0}
+.data-table td{color:var(--gray600)}
+.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}
+.footer{background:#fff;border-top:1px solid var(--gray100);padding:42px 0;color:var(--gray400);font-size:12px}
+.hidden{display:none!important}
+.toast{position:fixed;right:22px;bottom:22px;background:var(--navy);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);display:none;z-index:90;font-size:13px;max-width:360px}
+.toast.show{display:block}
+@media(max-width:960px){
+  .nav-links{display:none}.hero-grid,.admin-layout{grid-template-columns:1fr}.grid-4{grid-template-columns:1fr 1fr}.grid-3,.timeline-grid{grid-template-columns:1fr 1fr}.sidebar{position:static}
+}
+@media(max-width:640px){
+  .container{padding:0 18px}.hero{padding:64px 0}.hero h1{font-size:38px}.grid-4,.grid-3,.timeline-grid,.form-grid{grid-template-columns:1fr}.nav-actions .ghost{display:none}
+  section{padding:64px 0}
+}
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo" aria-label="HWASHIN 메인페이지"><img class="logo-img" src="assets/hwashin-logo.svg" alt="HWASHIN"></a>
+      <ul class="nav-links">
+        <li><a href="#types">모집 유형</a></li>
+        <li><a href="#benefits">지원 혜택</a></li>
+        <li><a href="#apply">지원 방법</a></li>
+        <li><a href="#result">결과 조회</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a class="btn primary small" href="result.html">합격자 조회 →</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">HWASHIN Internship 2026</div>
+        <h1>자동차 부품<br>전문기업 <em>화신</em>이<br>현장실습생을<br>모집합니다</h1>
+        <p>
+          ㈜화신 현장실습생 모집 안내 페이지입니다. 모집기간, 실습유형, 지원혜택을 확인하고
+          지원은 학교 현장실습 절차에 따라 진행해 주세요.
+        </p>
+        <div class="hero-cta">
+          <a href="#apply" class="btn primary">지원방법 보기 →</a>
+          <a href="result.html" class="btn ghost" style="background:transparent;color:rgba(255,255,255,.78);border-color:rgba(255,255,255,.22)">합격자 조회</a>
+          <span class="note">모집기간 <strong>2026.06.01 ~ 2026.06.07</strong></span>
+        </div>
+      </div>
+      <div class="dark-card">
+        <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start">
+          <div>
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.48);font-weight:900">Recruit Notice</div>
+            <div style="font-family:var(--mono);font-size:30px;color:#fff;margin-top:8px;font-weight:700">2026.06.01 - 06.07</div>
+          </div>
+          <span class="badge blue" style="margin:0;background:rgba(26,86,255,.18);color:#94B3FF">일주일간</span>
+        </div>
+        <div class="metric-grid">
+          <div class="metric"><div class="metric-label">채용연계형</div><div class="metric-val">4학년 2학기 이상</div></div>
+          <div class="metric"><div class="metric-label">체험형</div><div class="metric-val">3학년 이상</div></div>
+          <div class="metric"><div class="metric-label">채용연계형 실습</div><div class="metric-val">06.25 - 08.31</div></div>
+          <div class="metric"><div class="metric-label">체험형 실습</div><div class="metric-val">06.29 - 08.31</div></div>
+        </div>
+        <div style="margin-top:18px;font-size:13px;color:rgba(255,255,255,.52)">
+          출퇴근 통근버스 지원, 인턴십 종료 후 인증서 발급.
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="banner">
+    <div class="container">
+      <span class="icon-dot">!</span>
+      <span><strong>지원방법</strong> — 경북대학교 현장실습 절차를 통해 지원해 주세요. 본 페이지에서는 지원서 제출을 받지 않습니다.</span>
+    </div>
+  </div>
+
+  <section id="types">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag">RECRUIT TYPE</div>
+        <h2>채용연계형과 체험형<br>두 가지 유형으로 모집</h2>
+        <p>전공과 희망 직무에 따라 채용연계형 또는 체험형 현장실습에 지원할 수 있습니다.</p>
+      </div>
+      <div class="grid-4">
+        <div class="overview-item">
+          <div class="num">01</div>
+          <div class="label">채용연계형</div>
+          <div class="desc">4학년 2학기 이상,<br>2개월 실습 후 회사 공채 연계</div>
+        </div>
+        <div class="overview-item">
+          <div class="num">02</div>
+          <div class="label">모집직무</div>
+          <div class="desc">생산기술 / 품질 / 마케팅<br>해외물류 / 기획 / 인사</div>
+        </div>
+        <div class="overview-item">
+          <div class="num">03</div>
+          <div class="label">체험형</div>
+          <div class="desc">3학년 이상, 4명 모집</div>
+        </div>
+        <div class="overview-item">
+          <div class="num">04</div>
+          <div class="label">모집직무</div>
+          <div class="desc">R&D</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gray" id="benefits">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag">BENEFITS</div>
+        <h2>활동 시<br>지원혜택</h2>
+      </div>
+      <div class="grid-3">
+        <div class="feature">
+          <div class="feature-icon">💰</div>
+          <h3>현장실습비</h3>
+          <p>월 250만원을 지급합니다.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" style="background:var(--green2)">🚌</div>
+          <h3>출퇴근 지원</h3>
+          <p>출퇴근 통근버스를 지원합니다.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" style="background:var(--amber2)">📜</div>
+          <h3>인증서 발급</h3>
+          <p>인턴십 종료 후 인증서를 발급합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="apply">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag">SCHEDULE</div>
+        <h2>모집기간과<br>실습기간</h2>
+      </div>
+      <div class="timeline-grid">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h3>모집기간</h3>
+          <p>학교 공고 기간 내 현장실습 절차에 따라 지원합니다.</p>
+          <span class="date">2026.06.01 ~ 2026.06.07</span>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h3>채용연계형 실습기간</h3>
+          <p>채용연계형은 약 2개월간 직무별 실습을 진행합니다.</p>
+          <span class="date">2026.06.25 ~ 2026.08.31</span>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h3>체험형 실습기간</h3>
+          <p>체험형은 공고문 기준 기간 동안 R&D 직무 실습을 진행합니다.</p>
+          <span class="date">2026.06.29 ~ 2026.08.31</span>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <h3>지원방법</h3>
+          <p>경북대학교 현장실습 시스템 또는 담당 부서 안내에 따라 지원합니다.</p>
+          <span class="date">학교 현장실습</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gray" id="result">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag">RESULT CHECK</div>
+        <h2>전형 결과<br>조회 안내</h2>
+        <p>지원 이후 결과 조회 안내를 받은 학생은 이름과 생년월일을 입력해 전형 결과를 확인할 수 있습니다.</p>
+      </div>
+      <div class="grid-3">
+        <div class="notice-card">
+          <h3>서류 결과</h3>
+          <p>서류합격 여부와 면접 관련 안내를 확인합니다.</p>
+          <ul class="notice-list">
+            <li><span class="check">✓</span>이름과 생년월일 입력</li>
+            <li><span class="check">✓</span>서류합격 여부 확인</li>
+            <li><span class="check">✓</span>면접 안내 확인</li>
+          </ul>
+        </div>
+        <div class="notice-card">
+          <h3>최종 결과</h3>
+          <p>최종합격 여부와 준비서류 안내를 확인합니다.</p>
+          <ul class="notice-list">
+            <li><span class="check">✓</span>제출서류 목록</li>
+            <li><span class="check">✓</span>제출기한 및 제출처</li>
+            <li><span class="check">✓</span>요청사항 확인</li>
+          </ul>
+        </div>
+        <div class="notice-card">
+          <h3>조회 유의사항</h3>
+          <p>조회가 되지 않으면 입력값과 학교 접수 현황을 확인해 주세요.</p>
+          <ul class="notice-list">
+            <li><span class="check">✓</span>이름 띄어쓰기 확인</li>
+            <li><span class="check">✓</span>생년월일 형식 확인</li>
+            <li><span class="check">✓</span>학교 담당 부서 문의</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top:34px;display:flex;gap:12px;flex-wrap:wrap">
+        <a class="btn primary" href="result.html">합격자 조회 페이지 →</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-tag">FAQ</div>
+        <h2>자주 묻는 질문</h2>
+      </div>
+      <div class="grid-3">
+        <div class="feature">
+          <h3>이 페이지에서 지원할 수 있나요?</h3>
+          <p>아니요. 본 페이지에서는 직접 지원을 받지 않습니다. 지원은 경북대학교 현장실습 절차 또는 학교 안내에 따라 진행됩니다.</p>
+        </div>
+        <div class="feature">
+          <h3>합격 여부는 어떻게 확인하나요?</h3>
+          <p>전형 결과가 등록된 뒤, 학생은 합격자 조회 페이지에서 이름과 생년월일을 입력해 결과를 확인합니다.</p>
+        </div>
+        <div class="feature">
+          <h3>결과가 조회되지 않으면 어떻게 하나요?</h3>
+          <p>이름 또는 생년월일 입력값을 다시 확인해 주세요. 계속 조회되지 않으면 소속 대학 담당 부서 또는 화신 채용 담당자에게 문의합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container" style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <div><strong style="color:var(--navy)">㈜화신</strong><br>현장실습생 모집 및 결과 안내 페이지</div>
+      <div>문의: ji-suk.kim@hwashin.co.kr · © 2026 HWASHIN Co., Ltd.</div>
+    </div>
+  </footer>
+</body>
+</html>

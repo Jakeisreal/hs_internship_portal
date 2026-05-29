@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.netlify/
+*.log
+*.zip
+*-*.iam.gserviceaccount.com*.json
+applicant-management-*.json
+service-account*.json
+google-service-account*.json
+__ci_extract/
