@@ -113,8 +113,12 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
 .info-table th,.info-table td{text-align:left;border-bottom:1px solid var(--gray100);padding:10px 4px;font-size:13px}
 .info-table th{color:var(--gray400);width:150px;font-weight:900}
 .info-table td{color:var(--gray800)}
-.admin-layout{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start}
-.sidebar{position:sticky;top:88px}
+.admin-layout{display:block}
+.admin-workspace{display:grid;grid-template-columns:minmax(360px,.88fr) minmax(520px,1.12fr);gap:24px;align-items:start}
+.admin-settings{display:grid;grid-template-columns:minmax(320px,.92fr) minmax(320px,1.08fr);gap:20px;margin-top:24px}
+.admin-settings .form-panel{height:100%}
+.panel-scroll{max-height:calc(100vh - 110px);overflow:auto}
+.sidebar{position:static}
 .table-wrap{overflow:auto;border:1px solid var(--gray100);border-radius:18px;background:#fff}
 .data-table{width:100%;border-collapse:collapse;min-width:960px}
 .data-table th,.data-table td{border-bottom:1px solid var(--gray100);padding:11px 12px;text-align:left;font-size:13px}
@@ -126,7 +130,7 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
 .toast{position:fixed;right:22px;bottom:22px;background:var(--navy);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);display:none;z-index:90;font-size:13px;max-width:360px}
 .toast.show{display:block}
 @media(max-width:960px){
-  .nav-links{display:none}.hero-grid,.admin-layout{grid-template-columns:1fr}.grid-4{grid-template-columns:1fr 1fr}.grid-3,.timeline-grid{grid-template-columns:1fr 1fr}.sidebar{position:static}
+  .nav-links{display:none}.hero-grid,.admin-workspace,.admin-settings{grid-template-columns:1fr}.grid-4{grid-template-columns:1fr 1fr}.grid-3,.timeline-grid{grid-template-columns:1fr 1fr}.sidebar{position:static}.panel-scroll{max-height:none}
 }
 @media(max-width:640px){
   .container{padding:0 18px}.hero{padding:64px 0}.hero h1{font-size:38px}.grid-4,.grid-3,.timeline-grid,.form-grid{grid-template-columns:1fr}.nav-actions .ghost{display:none}
@@ -158,45 +162,8 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
 
   <section>
     <div class="container admin-layout">
-      <aside class="sidebar">
-        <div class="form-panel">
-          <div class="section-tag">API SETUP</div>
-          <h2 style="font-family:var(--display);font-weight:400;color:var(--navy);font-size:30px;line-height:1.15;margin-bottom:10px">Google Sheets 연결</h2>
-          <p class="help" style="margin-bottom:18px">배포된 Apps Script Web App URL과 관리자 키를 입력합니다. 비워두면 데모 모드로 동작합니다.</p>
-          <div class="field">
-            <label>Apps Script Web App URL</label>
-            <input class="input" id="apiEndpoint" placeholder="https://script.google.com/macros/s/.../exec">
-          </div>
-          <div class="field">
-            <label>관리자 키</label>
-            <input class="input" id="adminKey" type="password" placeholder="Apps Script의 ADMIN_KEY">
-          </div>
-          <button class="btn dark small" onclick="saveApiConfig()">설정 저장</button>
-          <button class="btn ghost small" onclick="clearApiConfig()">초기화</button>
-        </div>
-
-        <div class="form-panel" style="margin-top:20px">
-          <div class="section-tag">FILTER</div>
-          <div class="field">
-            <label>대학교 필터</label>
-            <input class="input" id="filterUniv" placeholder="예: 영남대학교" oninput="renderTable()">
-          </div>
-          <div class="field">
-            <label>전형 단계 필터</label>
-            <select id="filterStage" onchange="renderTable()">
-              <option value="">전체</option>
-              <option value="REVIEWING">검토 중</option>
-              <option value="DOCUMENT_PASS">서류합격</option>
-              <option value="DOCUMENT_FAIL">서류불합격</option>
-              <option value="FINAL_PASS">최종합격</option>
-              <option value="FINAL_FAIL">최종불합격</option>
-            </select>
-          </div>
-        </div>
-      </aside>
-
-      <main>
-        <div class="form-panel" style="margin-bottom:24px">
+      <main class="admin-workspace">
+        <div class="form-panel panel-scroll">
           <div class="section-tag">APPLICANT FORM</div>
           <h2 style="font-family:var(--display);font-weight:400;color:var(--navy);font-size:34px;line-height:1.1;margin-bottom:18px">지원자 등록 / 수정</h2>
 
@@ -260,7 +227,7 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
           </div>
         </div>
 
-        <div class="form-panel">
+        <div class="form-panel panel-scroll">
           <div class="toolbar">
             <div>
               <div class="section-tag" style="margin-bottom:8px">APPLICANT LIST</div>
@@ -283,6 +250,47 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
           </div>
         </div>
       </main>
+
+      <div class="admin-settings">
+        <div class="form-panel">
+          <div class="section-tag">API SETUP</div>
+          <h2 style="font-family:var(--display);font-weight:400;color:var(--navy);font-size:30px;line-height:1.15;margin-bottom:10px">Google Sheets 연결</h2>
+          <p class="help" style="margin-bottom:18px">Netlify Function API 경로와 관리자 키를 입력합니다. 비워두면 데모 모드로 동작합니다.</p>
+          <div class="form-grid">
+            <div class="field">
+              <label>Netlify Function API URL</label>
+              <input class="input" id="apiEndpoint" placeholder="/.netlify/functions/api">
+            </div>
+            <div class="field">
+              <label>관리자 키</label>
+              <input class="input" id="adminKey" type="password" placeholder="Netlify ADMIN_KEY">
+            </div>
+          </div>
+          <button class="btn dark small" onclick="saveApiConfig()">설정 저장</button>
+          <button class="btn ghost small" onclick="clearApiConfig()">초기화</button>
+        </div>
+
+        <div class="form-panel">
+          <div class="section-tag">FILTER</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>대학교 필터</label>
+              <input class="input" id="filterUniv" placeholder="예: 영남대학교" oninput="renderTable()">
+            </div>
+            <div class="field">
+              <label>전형 단계 필터</label>
+              <select id="filterStage" onchange="renderTable()">
+                <option value="">전체</option>
+                <option value="REVIEWING">검토 중</option>
+                <option value="DOCUMENT_PASS">서류합격</option>
+                <option value="DOCUMENT_FAIL">서류불합격</option>
+                <option value="FINAL_PASS">최종합격</option>
+                <option value="FINAL_FAIL">최종불합격</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
