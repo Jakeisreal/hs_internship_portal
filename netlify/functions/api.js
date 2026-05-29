@@ -2,7 +2,7 @@ const { google } = require('googleapis');
 
 const SHEET_NAME = process.env.GOOGLE_SHEET_NAME || 'applicants';
 const HEADERS = [
-  'id','university','name','birthDate','phone','email','major','field',
+  'id','university','name','birthDate','phone','email','major','internshipType','field',
   'documentStatus','finalStatus','currentStage','interviewDate','interviewPlace',
   'interviewConfirmStatus','interviewConfirmMemo',
   'noticeTitle','noticeBody','requiredDocuments','requestItems','memo','updatedAt'
@@ -35,6 +35,16 @@ exports.handler = async event => {
       requireAdmin(input.key);
       const saved = await upsert(input.payload || {});
       return response({ ok: true, applicant: saved });
+    }
+
+    if (action === 'bulkUpsert') {
+      requireAdmin(input.key);
+      const payloads = Array.isArray(input.payloads) ? input.payloads : [];
+      const saved = [];
+      for (const payload of payloads) {
+        saved.push(await upsert(payload || {}));
+      }
+      return response({ ok: true, count: saved.length, applicants: saved });
     }
 
     if (action === 'confirmInterview') {
@@ -237,7 +247,7 @@ function sanitize(payload) {
 function publicApplicant(a) {
   const allowed = [
     'university','name','birthDate','major','field','documentStatus','finalStatus',
-    'currentStage','interviewDate','interviewPlace','interviewConfirmStatus',
+    'internshipType','currentStage','interviewDate','interviewPlace','interviewConfirmStatus',
     'noticeTitle','noticeBody','requiredDocuments','requestItems','updatedAt'
   ];
   const out = {};

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
 :root{
   --navy:#0B0F1A;--navy2:#121A2F;--blue:#1A56FF;--blue2:#E8EEFF;
@@ -119,12 +120,15 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
 .admin-settings .form-panel{height:100%}
 .panel-scroll{max-height:calc(100vh - 110px);overflow:auto}
 .sidebar{position:static}
-.table-wrap{overflow:auto;border:1px solid var(--gray100);border-radius:18px;background:#fff}
-.data-table{width:100%;border-collapse:collapse;min-width:960px}
-.data-table th,.data-table td{border-bottom:1px solid var(--gray100);padding:11px 12px;text-align:left;font-size:13px}
+.table-wrap{overflow:hidden;border:1px solid var(--gray100);border-radius:18px;background:#fff}
+.data-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.data-table th,.data-table td{border-bottom:1px solid var(--gray100);padding:10px 8px;text-align:left;font-size:12px;vertical-align:middle;word-break:keep-all}
 .data-table th{background:var(--gray50);color:var(--gray800);font-weight:900;position:sticky;top:0}
-.data-table td{color:var(--gray600)}
+.data-table td{color:var(--gray600);overflow:hidden;text-overflow:ellipsis}
+.data-table .col-univ{width:16%}.data-table .col-name{width:13%}.data-table .col-type{width:13%}.data-table .col-field{width:16%}.data-table .col-stage{width:15%}.data-table .col-interview{width:15%}.data-table .col-edit{width:12%}
 .toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}
+.import-control{position:relative;overflow:hidden}
+.import-control input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .footer{background:#fff;border-top:1px solid var(--gray100);padding:42px 0;color:var(--gray400);font-size:12px}
 .hidden{display:none!important}
 .toast{position:fixed;right:22px;bottom:22px;background:var(--navy);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);display:none;z-index:90;font-size:13px;max-width:360px}
@@ -175,12 +179,16 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
             <div class="field"><label>이메일</label><input class="input" id="email" placeholder="student@univ.ac.kr"></div>
             <div class="field"><label>전공</label><input class="input" id="major" placeholder="컴퓨터공학과"></div>
             <div class="field">
-              <label>지원 분야</label>
+              <label>인턴 유형 *</label>
+              <select id="internshipType" onchange="updateFieldOptions()">
+                <option value="채용연계형">채용연계형</option>
+                <option value="체험형">체험형</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>지원 분야 *</label>
               <select id="field">
                 <option value="">선택</option>
-                <option>AI/데이터 분석</option>
-                <option>스마트팩토리/자동화</option>
-                <option>IT 시스템 개발</option>
               </select>
             </div>
             <div class="field">
@@ -194,7 +202,6 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
               </select>
             </div>
             <div class="field"><label>면접일자</label><input class="input" id="interviewDate" placeholder="2026-06-24 14:00"></div>
-            <div class="field"><label>면접방식/장소</label><input class="input" id="interviewPlace" placeholder="비대면 화상면접"></div>
           </div>
 
           <div class="field">
@@ -234,6 +241,7 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
               <h2 style="font-family:var(--display);font-weight:400;color:var(--navy);font-size:30px;line-height:1.1">지원자 목록</h2>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <label class="btn dark small import-control">CSV/XLSX 불러오기<input id="importFile" type="file" accept=".csv,.xlsx,.xls" onchange="importApplicantsFromFile(event)"></label>
               <button class="btn ghost small" onclick="exportCsv()">CSV 내보내기</button>
               <button class="btn warn small" onclick="seedDemo()">데모 데이터 생성</button>
             </div>
@@ -242,7 +250,7 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>대학교</th><th>이름</th><th>생년월일</th><th>전공</th><th>지원분야</th><th>전형단계</th><th>면접일자</th><th>회신</th><th>수정</th>
+                  <th class="col-univ">대학교</th><th class="col-name">이름</th><th class="col-type">유형</th><th class="col-field">지원분야</th><th class="col-stage">전형단계</th><th class="col-interview">면접일자</th><th class="col-edit">수정</th>
                 </tr>
               </thead>
               <tbody id="applicantRows"></tbody>
@@ -300,6 +308,10 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
     let API_ENDPOINT = localStorage.getItem('HWASHIN_API_ENDPOINT') || "/.netlify/functions/api";
     let ADMIN_KEY = localStorage.getItem('HWASHIN_ADMIN_KEY') || "";
     let applicants = JSON.parse(localStorage.getItem('HWASHIN_DEMO_APPLICANTS') || '[]');
+    const FIELD_OPTIONS = {
+      '채용연계형': ['생산기술','품질','마케팅','기획','인사','해외물류'],
+      '체험형': ['연구소']
+    };
 
     const NOTICE_TEMPLATES = {
       REVIEWING: {
@@ -334,6 +346,7 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('apiEndpoint').value = API_ENDPOINT;
       document.getElementById('adminKey').value = ADMIN_KEY;
+      updateFieldOptions();
       applyNoticeTemplate();
       renderTable();
       if(API_ENDPOINT && ADMIN_KEY) loadApplicants();
@@ -362,6 +375,29 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
     }
     function makeId(name, birthDate){ return `${normalizeName(name)}_${normalizeBirth(birthDate)}`; }
     function normalizeName(v){ return String(v || '').replace(/\s/g,'').trim(); }
+    function normalizeInternshipType(v){
+      const value = String(v || '').trim();
+      if(value.includes('체험')) return '체험형';
+      return '채용연계형';
+    }
+    function normalizeStage(v){
+      const value = String(v || '').trim().toUpperCase();
+      const compact = value.replace(/\s/g, '');
+      if(['DOCUMENT_PASS','서류합격'].includes(value) || compact === '서류합격') return 'DOCUMENT_PASS';
+      if(['DOCUMENT_FAIL','서류불합격','서류불합'].includes(value) || compact === '서류불합격') return 'DOCUMENT_FAIL';
+      if(['FINAL_PASS','최종합격'].includes(value) || compact === '최종합격') return 'FINAL_PASS';
+      if(['FINAL_FAIL','최종불합격','최종불합'].includes(value) || compact === '최종불합격') return 'FINAL_FAIL';
+      return value === 'REVIEWING' ? 'REVIEWING' : 'REVIEWING';
+    }
+    function updateFieldOptions(selectedValue){
+      const type = normalizeInternshipType(document.getElementById('internshipType')?.value);
+      const fieldSelect = document.getElementById('field');
+      if(!fieldSelect) return;
+      const current = selectedValue || fieldSelect.value;
+      const options = FIELD_OPTIONS[type] || FIELD_OPTIONS['채용연계형'];
+      fieldSelect.innerHTML = '<option value="">선택</option>' + options.map(item => `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`).join('');
+      fieldSelect.value = options.includes(current) ? current : (options.length === 1 ? options[0] : '');
+    }
 
     function applyNoticeTemplate(){
       const stage = document.getElementById('currentStage').value;
@@ -378,8 +414,8 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
       const data = {
         id: makeId(document.getElementById('name').value, document.getElementById('birthDate').value),
         university: val('university'), name: val('name'), birthDate: normalizeBirth(val('birthDate')),
-        phone: val('phone'), email: val('email'), major: val('major'), field: val('field'),
-        currentStage: val('currentStage'), interviewDate: val('interviewDate'), interviewPlace: val('interviewPlace'),
+        phone: val('phone'), email: val('email'), major: val('major'), internshipType: val('internshipType'), field: val('field'),
+        currentStage: val('currentStage'), interviewDate: val('interviewDate'), interviewPlace: '',
         noticeTitle: val('noticeTitle'), noticeBody: val('noticeBody'),
         requiredDocuments: val('requiredDocuments'), requestItems: val('requestItems'), memo: val('memo'),
         updatedAt: new Date().toISOString()
@@ -396,8 +432,8 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
       const data = getFormData();
       
       // 필수 필드 검증
-      if(!data.university || !data.name || !data.birthDate || !data.currentStage){
-        showToast('대학교, 이름, 생년월일, 전형 단계는 필수입니다.');
+      if(!data.university || !data.name || !data.birthDate || !data.internshipType || !data.field || !data.currentStage){
+        showToast('대학교, 이름, 생년월일, 인턴 유형, 지원 분야, 전형 단계는 필수입니다.');
         return;
       }
       
@@ -458,20 +494,20 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
         <tr>
           <td>${escapeHtml(a.university)}</td>
           <td><strong style="color:var(--navy)">${escapeHtml(a.name)}</strong></td>
-          <td>${escapeHtml(a.birthDate)}</td>
-          <td>${escapeHtml(a.major || '')}</td>
+          <td>${escapeHtml(a.internshipType || '채용연계형')}</td>
           <td>${escapeHtml(a.field || '')}</td>
           <td>${stageBadge(a.currentStage)}</td>
           <td>${escapeHtml(a.interviewDate || '')}</td>
-          <td>${escapeHtml(a.interviewConfirmStatus || '')}</td>
           <td><button class="btn ghost small" onclick="editApplicant('${escapeJs(a.id)}')">수정</button></td>
-        </tr>`).join('') : `<tr><td colspan="9" style="text-align:center;color:var(--gray400);padding:30px">등록된 지원자가 없습니다.</td></tr>`;
+        </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;color:var(--gray400);padding:30px">등록된 지원자가 없습니다.</td></tr>`;
     }
 
     function editApplicant(id){
       const a = applicants.find(x => x.id === id);
       if(!a) return;
-      ['university','name','birthDate','phone','email','major','field','currentStage','interviewDate','interviewPlace','noticeTitle','noticeBody','requiredDocuments','requestItems','memo'].forEach(k => {
+      document.getElementById('internshipType').value = normalizeInternshipType(a.internshipType);
+      updateFieldOptions(a.field || '');
+      ['university','name','birthDate','phone','email','major','field','currentStage','interviewDate','noticeTitle','noticeBody','requiredDocuments','requestItems','memo'].forEach(k => {
         const el = document.getElementById(k);
         if(el) el.value = a[k] || '';
       });
@@ -479,18 +515,20 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
     }
 
     function resetForm(){
-      ['university','name','birthDate','phone','email','major','field','interviewDate','interviewPlace','noticeTitle','noticeBody','requiredDocuments','requestItems','memo'].forEach(k => {
+      ['university','name','birthDate','phone','email','major','field','interviewDate','noticeTitle','noticeBody','requiredDocuments','requestItems','memo'].forEach(k => {
         const el = document.getElementById(k); if(el) el.value = '';
       });
+      document.getElementById('internshipType').value = '채용연계형';
+      updateFieldOptions();
       document.getElementById('currentStage').value = 'REVIEWING';
       applyNoticeTemplate();
     }
 
     function seedDemo(){
       applicants = [
-        {id:'홍길동_2004-01-01', university:'영남대학교', name:'홍길동', birthDate:'2004-01-01', major:'컴퓨터공학과', field:'IT 시스템 개발', currentStage:'DOCUMENT_PASS', documentStatus:'PASS', finalStatus:'WAITING', interviewDate:'2026-06-24 14:00', interviewPlace:'비대면 화상면접', noticeTitle:NOTICE_TEMPLATES.DOCUMENT_PASS.title, noticeBody:NOTICE_TEMPLATES.DOCUMENT_PASS.body, requiredDocuments:'', requestItems:NOTICE_TEMPLATES.DOCUMENT_PASS.req},
-        {id:'김화신_2003-05-12', university:'경북대학교', name:'김화신', birthDate:'2003-05-12', major:'기계공학과', field:'AI/데이터 분석', currentStage:'FINAL_PASS', documentStatus:'PASS', finalStatus:'PASS', noticeTitle:NOTICE_TEMPLATES.FINAL_PASS.title, noticeBody:NOTICE_TEMPLATES.FINAL_PASS.body, requiredDocuments:NOTICE_TEMPLATES.FINAL_PASS.docs, requestItems:NOTICE_TEMPLATES.FINAL_PASS.req},
-        {id:'이대한_2004-09-02', university:'계명대학교', name:'이대한', birthDate:'2004-09-02', major:'산업공학과', field:'스마트팩토리/자동화', currentStage:'DOCUMENT_FAIL', documentStatus:'FAIL', finalStatus:'WAITING', noticeTitle:NOTICE_TEMPLATES.DOCUMENT_FAIL.title, noticeBody:NOTICE_TEMPLATES.DOCUMENT_FAIL.body}
+        {id:'홍길동_2004-01-01', university:'영남대학교', name:'홍길동', birthDate:'2004-01-01', major:'컴퓨터공학과', internshipType:'채용연계형', field:'생산기술', currentStage:'DOCUMENT_PASS', documentStatus:'PASS', finalStatus:'WAITING', interviewDate:'2026-06-24 14:00', noticeTitle:NOTICE_TEMPLATES.DOCUMENT_PASS.title, noticeBody:NOTICE_TEMPLATES.DOCUMENT_PASS.body, requiredDocuments:'', requestItems:NOTICE_TEMPLATES.DOCUMENT_PASS.req},
+        {id:'김화신_2003-05-12', university:'경북대학교', name:'김화신', birthDate:'2003-05-12', major:'기계공학과', internshipType:'채용연계형', field:'품질', currentStage:'FINAL_PASS', documentStatus:'PASS', finalStatus:'PASS', noticeTitle:NOTICE_TEMPLATES.FINAL_PASS.title, noticeBody:NOTICE_TEMPLATES.FINAL_PASS.body, requiredDocuments:NOTICE_TEMPLATES.FINAL_PASS.docs, requestItems:NOTICE_TEMPLATES.FINAL_PASS.req},
+        {id:'이대한_2004-09-02', university:'계명대학교', name:'이대한', birthDate:'2004-09-02', major:'산업공학과', internshipType:'체험형', field:'연구소', currentStage:'DOCUMENT_FAIL', documentStatus:'FAIL', finalStatus:'WAITING', noticeTitle:NOTICE_TEMPLATES.DOCUMENT_FAIL.title, noticeBody:NOTICE_TEMPLATES.DOCUMENT_FAIL.body}
       ];
       localStorage.setItem('HWASHIN_DEMO_APPLICANTS', JSON.stringify(applicants));
       renderTable();
@@ -498,13 +536,121 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
     }
 
     function exportCsv(){
-      const header = ['university','name','birthDate','phone','email','major','field','currentStage','interviewDate','interviewPlace','noticeTitle','noticeBody','requiredDocuments','requestItems','memo','updatedAt'];
+      const header = ['university','name','birthDate','phone','email','major','internshipType','field','currentStage','interviewDate','noticeTitle','noticeBody','requiredDocuments','requestItems','memo','updatedAt'];
       const csv = [header.join(',')].concat(applicants.map(a => header.map(k => `"${String(a[k] || '').replace(/"/g,'""')}"`).join(','))).join('\n');
       const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8;'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; a.download = 'hwashin_internship_applicants.csv'; a.click();
       URL.revokeObjectURL(url);
+    }
+
+    async function importApplicantsFromFile(event){
+      const file = event.target.files && event.target.files[0];
+      event.target.value = '';
+      if(!file) return;
+      try {
+        const rows = await readApplicantFile(file);
+        const normalized = rows.map(normalizeImportRow).filter(row => row.name && row.birthDate);
+        if(!normalized.length) return showToast('불러올 지원자 데이터가 없습니다.');
+        if(API_ENDPOINT && ADMIN_KEY){
+          const res = await callApi({action:'bulkUpsert', key:ADMIN_KEY, payloads: normalized}, 'POST');
+          if(!res.ok) return showToast(res.message || '파일 저장에 실패했습니다.');
+          showToast(`${res.count || normalized.length}명을 Google Sheets에 저장했습니다.`);
+          await loadApplicants();
+        } else {
+          normalized.forEach(item => {
+            const idx = applicants.findIndex(a => a.id === item.id);
+            if(idx >= 0) applicants[idx] = {...applicants[idx], ...item};
+            else applicants.push(item);
+          });
+          localStorage.setItem('HWASHIN_DEMO_APPLICANTS', JSON.stringify(applicants));
+          renderTable();
+          showToast(`${normalized.length}명을 데모 목록에 반영했습니다.`);
+        }
+      } catch(error) {
+        showToast(error.message || '파일을 불러오지 못했습니다.');
+      }
+    }
+    function readApplicantFile(file){
+      const lower = file.name.toLowerCase();
+      if(lower.endsWith('.csv')){
+        return file.text().then(text => csvToObjects(text));
+      }
+      if(!window.XLSX) throw new Error('XLSX 파서가 로드되지 않았습니다. 잠시 후 다시 시도해 주세요.');
+      return file.arrayBuffer().then(buffer => {
+        const workbook = XLSX.read(buffer, {type:'array'});
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        return XLSX.utils.sheet_to_json(sheet, {defval:''});
+      });
+    }
+    function csvToObjects(text){
+      const rows = parseCsv(text.replace(/^\uFEFF/, ''));
+      if(rows.length < 2) return [];
+      const headers = rows[0].map(h => String(h || '').trim());
+      return rows.slice(1).filter(row => row.some(Boolean)).map(row => {
+        const obj = {};
+        headers.forEach((header, index) => obj[header] = row[index] || '');
+        return obj;
+      });
+    }
+    function parseCsv(text){
+      const rows = [];
+      let row = [], value = '', quote = false;
+      for(let i = 0; i < text.length; i++){
+        const ch = text[i], next = text[i + 1];
+        if(ch === '"' && quote && next === '"'){ value += '"'; i++; continue; }
+        if(ch === '"'){ quote = !quote; continue; }
+        if(ch === ',' && !quote){ row.push(value); value = ''; continue; }
+        if((ch === '\n' || ch === '\r') && !quote){
+          if(ch === '\r' && next === '\n') i++;
+          row.push(value); rows.push(row); row = []; value = ''; continue;
+        }
+        value += ch;
+      }
+      row.push(value);
+      if(row.some(cell => cell !== '')) rows.push(row);
+      return rows;
+    }
+    function pick(row, keys){
+      for(const key of keys){
+        if(row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') return String(row[key]).trim();
+      }
+      return '';
+    }
+    function normalizeImportRow(row){
+      const type = normalizeInternshipType(pick(row, ['internshipType','인턴유형','인턴 유형','유형','모집유형','모집 유형']));
+      const fallbackField = type === '체험형' ? '연구소' : '';
+      const item = {
+        university: pick(row, ['university','대학교','대학','학교']),
+        name: pick(row, ['name','이름','성명']),
+        birthDate: normalizeBirth(pick(row, ['birthDate','생년월일','생년월일(YYYY-MM-DD)','birth','birthday'])),
+        phone: pick(row, ['phone','연락처','전화번호','휴대폰']),
+        email: pick(row, ['email','이메일','메일']),
+        major: pick(row, ['major','전공','학과']),
+        internshipType: type,
+        field: pick(row, ['field','지원분야','지원 분야','직무']) || fallbackField,
+        currentStage: normalizeStage(pick(row, ['currentStage','전형단계','전형 단계','결과','status'])),
+        interviewDate: pick(row, ['interviewDate','면접일자','면접 일자','면접일시']),
+        noticeTitle: pick(row, ['noticeTitle','안내문제목','안내문 제목']),
+        noticeBody: pick(row, ['noticeBody','안내문본문','안내문 본문']),
+        requiredDocuments: pick(row, ['requiredDocuments','제출서류','제출 서류']),
+        requestItems: pick(row, ['requestItems','요청사항','제출기한','제출 기한']),
+        memo: pick(row, ['memo','메모','담당자메모'])
+      };
+      if(!FIELD_OPTIONS[item.internshipType].includes(item.field)) item.field = fallbackField || FIELD_OPTIONS[item.internshipType][0];
+      item.id = makeId(item.name, item.birthDate);
+      item.updatedAt = new Date().toISOString();
+      item.documentStatus = item.currentStage === 'DOCUMENT_PASS' || item.currentStage === 'FINAL_PASS' || item.currentStage === 'FINAL_FAIL' ? 'PASS' :
+                            item.currentStage === 'DOCUMENT_FAIL' ? 'FAIL' : 'WAITING';
+      item.finalStatus = item.currentStage === 'FINAL_PASS' ? 'PASS' :
+                         item.currentStage === 'FINAL_FAIL' ? 'FAIL' : 'WAITING';
+      const template = NOTICE_TEMPLATES[item.currentStage] || NOTICE_TEMPLATES.REVIEWING;
+      item.noticeTitle = item.noticeTitle || template.title;
+      item.noticeBody = item.noticeBody || template.body;
+      item.requiredDocuments = item.requiredDocuments || template.docs;
+      item.requestItems = item.requestItems || template.req;
+      return item;
     }
 
     async function callApi(params, method = 'GET'){

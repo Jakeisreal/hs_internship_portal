@@ -228,24 +228,24 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
 
     const DEMO_APPLICANTS = [
       {
-        university:"영남대학교", name:"홍길동", birthDate:"2004-01-01", email:"hong@univ.ac.kr", major:"컴퓨터공학과", field:"IT 시스템 개발",
+        university:"영남대학교", name:"홍길동", birthDate:"2004-01-01", email:"hong@univ.ac.kr", major:"컴퓨터공학과", internshipType:"채용연계형", field:"생산기술",
         currentStage:"DOCUMENT_PASS", documentStatus:"PASS", finalStatus:"WAITING",
-        interviewDate:"2026-06-24 14:00", interviewPlace:"비대면 화상면접",
+        interviewDate:"2026-06-24 14:00",
         noticeTitle:"서류전형 합격 및 면접 참석 확인 요청",
         noticeBody:"서류전형에 합격하셨습니다. 아래 면접 일정을 확인한 뒤 참석 가능 여부를 회신해 주세요.",
         requiredDocuments:"", requestItems:"면접 참석 가능 여부 회신 / 일정 조율 필요 시 사유 기재"
       },
       {
-        university:"경북대학교", name:"김화신", birthDate:"2003-05-12", email:"kim@univ.ac.kr", major:"기계공학과", field:"AI/데이터 분석",
+        university:"경북대학교", name:"김화신", birthDate:"2003-05-12", email:"kim@univ.ac.kr", major:"기계공학과", internshipType:"채용연계형", field:"품질",
         currentStage:"FINAL_PASS", documentStatus:"PASS", finalStatus:"PASS",
-        interviewDate:"", interviewPlace:"",
+        interviewDate:"",
         noticeTitle:"최종합격 및 입사 준비서류 안내",
         noticeBody:"최종합격을 축하드립니다. 아래 준비서류와 요청사항을 기한 내 제출해 주세요.",
         requiredDocuments:"재학증명서, 통장사본, 신분증 사본, 보안서약서, 개인정보 수집·이용 동의서",
         requestItems:"제출기한: 2026-07-02 17:00 / 제출처: ji-suk.kim@hwashin.co.kr"
       },
       {
-        university:"계명대학교", name:"이대한", birthDate:"2004-09-02", email:"lee@univ.ac.kr", major:"산업공학과", field:"스마트팩토리/자동화",
+        university:"계명대학교", name:"이대한", birthDate:"2004-09-02", email:"lee@univ.ac.kr", major:"산업공학과", internshipType:"체험형", field:"연구소",
         currentStage:"DOCUMENT_FAIL", documentStatus:"FAIL", finalStatus:"WAITING",
         noticeTitle:"서류전형 결과 안내",
         noticeBody:"현장실습 서류전형 결과 아쉽게도 이번 전형에서는 함께하지 못하게 되었습니다.",
@@ -430,6 +430,10 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
             <div class="info-value">${escapeHtml(a.major || '-')}</div>
           </div>
           <div class="info-item">
+            <div class="info-label">인턴 유형</div>
+            <div class="info-value">${escapeHtml(a.internshipType || '-')}</div>
+          </div>
+          <div class="info-item">
             <div class="info-label">지원분야</div>
             <div class="info-value">${escapeHtml(a.field || '-')}</div>
           </div>
@@ -437,12 +441,6 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
           <div class="info-item">
             <div class="info-label">면접일자</div>
             <div class="info-value">${escapeHtml(a.interviewDate)}</div>
-          </div>
-          ` : ''}
-          ${a.interviewPlace ? `
-          <div class="info-item">
-            <div class="info-label">면접방식</div>
-            <div class="info-value">${escapeHtml(a.interviewPlace)}</div>
           </div>
           ` : ''}
         </div>
