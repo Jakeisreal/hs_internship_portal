@@ -212,6 +212,10 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
                   <option value="FINAL_FAIL">최종불합격</option>
                 </select>
               </div>
+              <div class="list-filter">
+                <label>면접일자</label>
+                <input class="input" id="bulkInterviewDate" placeholder="2026-06-24 14:00">
+              </div>
               <button class="btn primary small" onclick="bulkUpdateStage()">선택 지원자 일괄 적용</button>
               <button class="btn ghost small" onclick="loadApplicants()">목록 새로고침</button>
             </div>
@@ -463,9 +467,10 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
       if(!ids.length) return showToast('전형단계를 변경할 지원자를 선택해 주세요.');
       const stage = document.getElementById('bulkStage').value;
       const stagePayload = buildStagePayload(stage);
+      const bulkInterviewDate = val('bulkInterviewDate');
       const updates = applicants
         .filter(item => ids.includes(item.id))
-        .map(item => ({...item, ...stagePayload}));
+        .map(item => ({...item, ...stagePayload, interviewDate: bulkInterviewDate || item.interviewDate || ''}));
       if(!updates.length) return showToast('선택된 지원자를 찾을 수 없습니다.');
       if(API_ENDPOINT && ADMIN_KEY){
         const res = await callApi({action:'bulkUpsert', key:ADMIN_KEY, payloads: updates}, 'POST');
