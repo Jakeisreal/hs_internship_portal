@@ -127,6 +127,10 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
 .data-table td{color:var(--gray600);overflow:hidden;text-overflow:ellipsis}
 .data-table .col-univ{width:16%}.data-table .col-name{width:13%}.data-table .col-type{width:13%}.data-table .col-field{width:16%}.data-table .col-stage{width:15%}.data-table .col-interview{width:15%}.data-table .col-edit{width:12%}
 .toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}
+.list-controls{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+.list-filter{min-width:132px}
+.list-filter label{display:block;font-size:11px;font-weight:900;color:var(--gray800);letter-spacing:.04em;margin-bottom:6px}
+.list-filter .input,.list-filter select{height:38px;font-size:12px;border-radius:10px}
 .import-control{position:relative;overflow:hidden}
 .import-control input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .footer{background:#fff;border-top:1px solid var(--gray100);padding:42px 0;color:var(--gray400);font-size:12px}
@@ -240,7 +244,22 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
               <div class="section-tag" style="margin-bottom:8px">APPLICANT LIST</div>
               <h2 style="font-family:var(--display);font-weight:400;color:var(--navy);font-size:30px;line-height:1.1">지원자 목록</h2>
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div class="list-controls">
+              <div class="list-filter">
+                <label>대학교</label>
+                <input class="input" id="filterUniv" placeholder="전체" oninput="renderTable()">
+              </div>
+              <div class="list-filter">
+                <label>전형 단계</label>
+                <select id="filterStage" onchange="renderTable()">
+                  <option value="">전체</option>
+                  <option value="REVIEWING">검토 중</option>
+                  <option value="DOCUMENT_PASS">서류합격</option>
+                  <option value="DOCUMENT_FAIL">서류불합격</option>
+                  <option value="FINAL_PASS">최종합격</option>
+                  <option value="FINAL_FAIL">최종불합격</option>
+                </select>
+              </div>
               <label class="btn dark small import-control">CSV/XLSX 불러오기<input id="importFile" type="file" accept=".csv,.xlsx,.xls" onchange="importApplicantsFromFile(event)"></label>
               <button class="btn ghost small" onclick="exportCsv()">CSV 내보내기</button>
               <button class="btn warn small" onclick="seedDemo()">데모 데이터 생성</button>
@@ -278,26 +297,6 @@ textarea{height:96px;padding:12px 14px;resize:vertical}
           <button class="btn ghost small" onclick="clearApiConfig()">초기화</button>
         </div>
 
-        <div class="form-panel">
-          <div class="section-tag">FILTER</div>
-          <div class="form-grid">
-            <div class="field">
-              <label>대학교 필터</label>
-              <input class="input" id="filterUniv" placeholder="예: 영남대학교" oninput="renderTable()">
-            </div>
-            <div class="field">
-              <label>전형 단계 필터</label>
-              <select id="filterStage" onchange="renderTable()">
-                <option value="">전체</option>
-                <option value="REVIEWING">검토 중</option>
-                <option value="DOCUMENT_PASS">서류합격</option>
-                <option value="DOCUMENT_FAIL">서류불합격</option>
-                <option value="FINAL_PASS">최종합격</option>
-                <option value="FINAL_FAIL">최종불합격</option>
-              </select>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
